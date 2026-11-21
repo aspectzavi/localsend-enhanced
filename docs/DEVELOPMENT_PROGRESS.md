@@ -11,6 +11,7 @@
 - Added the first device identity/trust persistence model, explicitly separated from favorites and quick-save policy.
 - Added an original-client-shaped v2 registration fixture test.
 - Updated the checked-in Mockito mock until the next `build_runner` run regenerates it from the persistence service API.
+- Added a Refena device-trust service with explicit upsert, trust, auto-accept and removal actions plus provider tests.
 
 ## Current implementation state
 

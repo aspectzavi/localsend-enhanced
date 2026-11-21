@@ -22,6 +22,22 @@ class DeviceTrustRecord {
 
   bool get canAutoAccept => trusted && autoAccept;
 
+  DeviceTrustRecord copyWith({
+    String? alias,
+    DateTime? lastSeen,
+    bool? trusted,
+    bool? autoAccept,
+  }) {
+    return DeviceTrustRecord(
+      fingerprint: fingerprint,
+      alias: alias ?? this.alias,
+      firstSeen: firstSeen,
+      lastSeen: lastSeen ?? this.lastSeen,
+      trusted: trusted ?? this.trusted,
+      autoAccept: autoAccept ?? this.autoAccept,
+    );
+  }
+
   Map<String, Object?> toJson() => {
         'fingerprint': fingerprint,
         'alias': alias,
