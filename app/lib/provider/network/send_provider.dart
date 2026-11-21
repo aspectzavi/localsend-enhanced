@@ -1,6 +1,9 @@
 import 'dart:async';
+
+import 'package:collection/collection.dart';
 import 'package:flutter/material.dart';
 import 'package:localsend_app/model/cross_file.dart';
+import 'package:localsend_app/model/persistence/transfer_record.dart';
 import 'package:localsend_app/model/send_mode.dart';
 import 'package:localsend_app/model/state/send/send_session_state.dart';
 import 'package:localsend_app/model/state/send/sending_file.dart';
@@ -11,6 +14,7 @@ import 'package:localsend_app/pages/send_page.dart';
 import 'package:localsend_app/provider/device_info_provider.dart';
 import 'package:localsend_app/provider/file_transfer_provider.dart';
 import 'package:localsend_app/provider/http_provider.dart';
+import 'package:localsend_app/provider/persistence_provider.dart';
 import 'package:localsend_app/provider/selection/selected_sending_files_provider.dart';
 import 'package:localsend_app/provider/settings_provider.dart';
 import 'package:localsend_app/util/message_preview.dart';
@@ -568,6 +572,8 @@ class SendNotifier extends Notifier<Map<String, SendSessionState>> {
     // The transfer is over, the process no longer needs to be kept alive for it.
     TransferNotification.stop(sessionId);
 
+    unawaited(_persistTransferRecord(sessionState));
+
     if (state[sessionId]!.status != SessionStatus.sending) {
       _logger.info('Transfer was canceled.');
     } else {
@@ -593,6 +599,34 @@ class SendNotifier extends Notifier<Map<String, SendSessionState>> {
         }
       }
     }
+  }
+
+  Future<void> _persistTransferRecord(SendSessionState session) async {
+    final completedAt = DateTime.now().toUtc();
+    final outcome = switch (session.status) {
+      SessionStatus.sending => ref.read(fileTransferProvider).getStatuses(session.sessionId).any((status) => status == FileStatus.failed)
+          ? TransferOutcome.failed
+          : TransferOutcome.completed,
+      _ => TransferOutcome.canceled,
+    };
+    final errorMessage = session.errorMessage ??
+        session.files.values.map((file) => file.errorMessage).whereType<String>().firstOrNull;
+    await ref.read(persistenceProvider).appendTransferRecord(
+          TransferRecord(
+            id: session.sessionId,
+            direction: TransferDirection.sent,
+            peerFingerprint: session.target.fingerprint,
+            peerAlias: session.target.alias,
+            fileCount: session.files.length,
+            totalBytes: session.files.values.fold(0, (total, file) => total + file.file.size),
+            startedAt: session.startTime == null
+                ? completedAt
+                : DateTime.fromMillisecondsSinceEpoch(session.startTime!, isUtc: true),
+            completedAt: completedAt,
+            outcome: outcome,
+            errorMessage: errorMessage,
+          ),
+        );
   }
 
   final uriContent = UriContent();

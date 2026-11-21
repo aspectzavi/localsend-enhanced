@@ -13,6 +13,7 @@ import 'package:localsend_app/model/persistence/device_trust_record.dart' as _i1
 import 'package:localsend_app/model/persistence/favorite_device.dart' as _i7;
 import 'package:localsend_app/model/persistence/quick_save_mode.dart' as _i12;
 import 'package:localsend_app/model/persistence/receive_history_entry.dart' as _i6;
+import 'package:localsend_app/model/persistence/transfer_record.dart' as _i17;
 import 'package:localsend_app/model/send_mode.dart' as _i13;
 import 'package:localsend_app/provider/persistence_provider.dart' as _i4;
 import 'package:localsend_isolates/model/device.dart' as _i14;
@@ -157,6 +158,24 @@ class MockPersistenceService extends _i1.Mock implements _i4.PersistenceService 
   _i5.Future<void> setDeviceTrustRecords(List<_i16.DeviceTrustRecord>? records) =>
       (super.noSuchMethod(
             Invocation.method(#setDeviceTrustRecords, [records]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  List<_i17.TransferRecord> getTransferRecords() =>
+      (super.noSuchMethod(
+            Invocation.method(#getTransferRecords, []),
+            returnValue: <_i17.TransferRecord>[],
+            returnValueForMissingStub: <_i17.TransferRecord>[],
+          )
+          as List<_i17.TransferRecord>);
+
+  @override
+  _i5.Future<void> appendTransferRecord(_i17.TransferRecord? record) =>
+      (super.noSuchMethod(
+            Invocation.method(#appendTransferRecord, [record]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )

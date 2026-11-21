@@ -10,6 +10,7 @@ import 'package:localsend_app/model/persistence/device_trust_record.dart';
 import 'package:localsend_app/model/persistence/favorite_device.dart';
 import 'package:localsend_app/model/persistence/quick_save_mode.dart';
 import 'package:localsend_app/model/persistence/receive_history_entry.dart';
+import 'package:localsend_app/model/persistence/transfer_record.dart';
 import 'package:localsend_app/model/send_mode.dart';
 import 'package:localsend_app/provider/window_dimensions_provider.dart';
 import 'package:localsend_app/util/alias_generator.dart';
@@ -61,6 +62,9 @@ const _favorites = 'ls_favorites';
 
 // Device identity and trust policy. This is separate from favorites.
 const _deviceTrustRecords = 'ls_device_trust_records';
+
+const _transferRecords = 'ls_transfer_records';
+const _maxTransferRecords = 100;
 
 // App Window Offset and Size info
 const _windowOffsetX = 'ls_window_offset_x';
@@ -289,6 +293,21 @@ class PersistenceService {
   Future<void> setDeviceTrustRecords(List<DeviceTrustRecord> records) async {
     final recordsRaw = records.map((record) => jsonEncode(record.toJson())).toList();
     await _prefs.setStringList(_deviceTrustRecords, recordsRaw);
+  }
+
+  List<TransferRecord> getTransferRecords() {
+    final recordsRaw = _prefs.getStringList(_transferRecords) ?? [];
+    return recordsRaw
+        .map((entry) => TransferRecord.fromJson((jsonDecode(entry) as Map).cast<String, Object?>()))
+        .toList();
+  }
+
+  Future<void> appendTransferRecord(TransferRecord record) async {
+    final records = [record, ...getTransferRecords().where((entry) => entry.id != record.id)]
+        .take(_maxTransferRecords)
+        .toList();
+    final recordsRaw = records.map((entry) => jsonEncode(entry.toJson())).toList();
+    await _prefs.setStringList(_transferRecords, recordsRaw);
   }
 
   String getShowToken() {

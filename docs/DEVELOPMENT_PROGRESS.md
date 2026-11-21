@@ -12,6 +12,7 @@
 - Added an original-client-shaped v2 registration fixture test.
 - Updated the checked-in Mockito mock until the next `build_runner` run regenerates it from the persistence service API.
 - Added a Refena device-trust service with explicit upsert, trust, auto-accept and removal actions plus provider tests.
+- Added bounded durable transfer records and wired outgoing session completion to record completed, failed, and canceled transfers.
 
 ## Current implementation state
 
@@ -35,6 +36,6 @@ The current tree is a mature LocalSend client with production standard-transfer 
 ## Exact next tasks
 
 1. Run `fvm flutter analyze`, app tests, isolate tests, `cargo clippy --features full --all-targets`, and `cargo test --features full`.
-2. Add a small compatibility fixture suite around the existing v2 DTOs and route contract.
-3. Add the first persistence domain model for device identity/trust, with migration and policy tests.
-4. Review the model against the existing favorites and quick-save behavior before exposing UI.
+2. Add receive-side transfer record persistence and history UI integration.
+3. Add a queue abstraction above the existing v2 transport for priority and retry policy.
+4. Run the full pinned Flutter and Rust checks before merging the next milestone.
