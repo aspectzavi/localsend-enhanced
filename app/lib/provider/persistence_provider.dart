@@ -6,6 +6,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter/material.dart';
 import 'package:localsend_app/gen/strings.g.dart';
 import 'package:localsend_app/model/persistence/color_mode.dart';
+import 'package:localsend_app/model/persistence/device_trust_record.dart';
 import 'package:localsend_app/model/persistence/favorite_device.dart';
 import 'package:localsend_app/model/persistence/quick_save_mode.dart';
 import 'package:localsend_app/model/persistence/receive_history_entry.dart';
@@ -57,6 +58,9 @@ const _receiveHistory = 'ls_receive_history';
 
 // Favorites
 const _favorites = 'ls_favorites';
+
+// Device identity and trust policy. This is separate from favorites.
+const _deviceTrustRecords = 'ls_device_trust_records';
 
 // App Window Offset and Size info
 const _windowOffsetX = 'ls_window_offset_x';
@@ -273,6 +277,18 @@ class PersistenceService {
   Future<void> setFavorites(List<FavoriteDevice> entries) async {
     final favoritesRaw = entries.map((entry) => jsonEncode(entry.toJson())).toList();
     await _prefs.setStringList(_favorites, favoritesRaw);
+  }
+
+  List<DeviceTrustRecord> getDeviceTrustRecords() {
+    final recordsRaw = _prefs.getStringList(_deviceTrustRecords) ?? [];
+    return recordsRaw
+        .map((entry) => DeviceTrustRecord.fromJson((jsonDecode(entry) as Map).cast<String, Object?>()))
+        .toList();
+  }
+
+  Future<void> setDeviceTrustRecords(List<DeviceTrustRecord> records) async {
+    final recordsRaw = records.map((record) => jsonEncode(record.toJson())).toList();
+    await _prefs.setStringList(_deviceTrustRecords, recordsRaw);
   }
 
   String getShowToken() {

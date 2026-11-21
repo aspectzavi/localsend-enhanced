@@ -9,6 +9,7 @@ import 'dart:ui' as _i3;
 import 'package:flutter/material.dart' as _i9;
 import 'package:localsend_app/gen/strings.g.dart' as _i11;
 import 'package:localsend_app/model/persistence/color_mode.dart' as _i10;
+import 'package:localsend_app/model/persistence/device_trust_record.dart' as _i16;
 import 'package:localsend_app/model/persistence/favorite_device.dart' as _i7;
 import 'package:localsend_app/model/persistence/quick_save_mode.dart' as _i12;
 import 'package:localsend_app/model/persistence/receive_history_entry.dart' as _i6;
@@ -138,6 +139,24 @@ class MockPersistenceService extends _i1.Mock implements _i4.PersistenceService 
   _i5.Future<void> setFavorites(List<_i7.FavoriteDevice>? entries) =>
       (super.noSuchMethod(
             Invocation.method(#setFavorites, [entries]),
+            returnValue: _i5.Future<void>.value(),
+            returnValueForMissingStub: _i5.Future<void>.value(),
+          )
+          as _i5.Future<void>);
+
+  @override
+  List<_i16.DeviceTrustRecord> getDeviceTrustRecords() =>
+      (super.noSuchMethod(
+            Invocation.method(#getDeviceTrustRecords, []),
+            returnValue: <_i16.DeviceTrustRecord>[],
+            returnValueForMissingStub: <_i16.DeviceTrustRecord>[],
+          )
+          as List<_i16.DeviceTrustRecord>);
+
+  @override
+  _i5.Future<void> setDeviceTrustRecords(List<_i16.DeviceTrustRecord>? records) =>
+      (super.noSuchMethod(
+            Invocation.method(#setDeviceTrustRecords, [records]),
             returnValue: _i5.Future<void>.value(),
             returnValueForMissingStub: _i5.Future<void>.value(),
           )

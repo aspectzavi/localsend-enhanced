@@ -250,9 +250,21 @@ mod tests {
             )]),
         };
 
-        let json = serde_json::to_string(&request).unwrap();
-        assert!(json.contains("\"info\""));
-        assert!(json.contains("\"files\""));
-        assert!(json.contains("\"fingerprint\":\"sender-fingerprint\""));
+        let json = serde_json::to_value(&request).unwrap();
+        let object = json.as_object().unwrap();
+        assert_eq!(object.len(), 2);
+        assert!(object.contains_key("info"));
+        assert!(object.contains_key("files"));
+
+        let info = object.get("info").unwrap().as_object().unwrap();
+        assert_eq!(info.get("fingerprint").unwrap(), "sender-fingerprint");
+        assert_eq!(info.get("deviceModel"), None);
+        assert_eq!(info.get("deviceType"), None);
+        assert_eq!(info.get("protocol").unwrap(), "https");
+
+        let files = object.get("files").unwrap().as_object().unwrap();
+        let file = files.get("file1").unwrap().as_object().unwrap();
+        assert_eq!(file.get("fileName").unwrap(), "test.png");
+        assert_eq!(file.get("fileType").unwrap(), "image/png");
     }
 }
